@@ -36,13 +36,13 @@
     return (s / 9) | 0;
   }
 
-  function displaySquare(s) {
-    if (state.playerRed) return s;
-    return (9 - rankOf(s)) * 9 + (8 - fileOf(s));
-  }
-
-  function fromDisplay(ds) {
-    return displaySquare(ds);
+  function visualPos(s) {
+    var f = fileOf(s);
+    var r = rankOf(s);
+    return {
+      left: ((state.playerRed ? f : 8 - f) / 8) * 100,
+      top: ((state.playerRed ? 9 - r : r) / 9) * 100,
+    };
   }
 
   function ensureAudio() {
@@ -214,6 +214,8 @@
     state.undone = [];
     state.requestId++;
     hideResult();
+    buildGrid();
+    buildHitLayer();
     setStatus(state.playerRed ? "你执红，请先走" : "你执黑，机器先走");
     render();
     if (!isHumanTurn()) think();
@@ -316,11 +318,9 @@
     pieces.innerHTML = "";
 
     function place(el, s) {
-      var ds = displaySquare(s);
-      var f = fileOf(ds);
-      var r = 9 - rankOf(ds);
-      el.style.left = (f / 8) * 100 + "%";
-      el.style.top = (r / 9) * 100 + "%";
+      var p = visualPos(s);
+      el.style.left = p.left + "%";
+      el.style.top = p.top + "%";
     }
 
     if (state.lastFrom >= 0) {
@@ -432,7 +432,6 @@
     els.turnLabel.textContent = state.over ? "对局结束" : state.thinking ? "机器思考" : isHumanTurn() ? "轮到你" : "轮到机器";
     els.thinkDot.classList.toggle("on", state.thinking);
     els.boardWrap.classList.toggle("thinking", state.thinking);
-    els.boardWrap.classList.toggle("flipped", !state.playerRed);
   }
 
   function render() {
@@ -444,6 +443,7 @@
 
   function buildGrid() {
     var svg = els.grid;
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
     var NS = "http://www.w3.org/2000/svg";
     var W = 800;
     var H = 900;
@@ -453,6 +453,12 @@
     var xf = gw / 8;
     var yf = gh / 9;
     svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+
+    function pt(file, rank) {
+      var vf = state.playerRed ? file : 8 - file;
+      var vr = state.playerRed ? 9 - rank : rank;
+      return { x: pad + vf * xf, y: pad + vr * yf };
+    }
 
     function line(x1, y1, x2, y2, cls) {
       var l = document.createElementNS(NS, "line");
@@ -480,17 +486,31 @@
     inner.setAttribute("class", "board-inner");
     svg.appendChild(inner);
 
-    var r, f;
-    for (r = 0; r <= 9; r++) line(pad, pad + r * yf, pad + gw, pad + r * yf);
-    for (f = 0; f <= 8; f++) {
-      line(pad + f * xf, pad, pad + f * xf, pad + 4 * yf);
-      line(pad + f * xf, pad + 5 * yf, pad + f * xf, pad + 9 * yf);
+    var r, f, a, b;
+    for (r = 0; r <= 9; r++) {
+      a = pt(0, r);
+      b = pt(8, r);
+      line(a.x, a.y, b.x, b.y);
     }
-    line(pad, pad + 4 * yf, pad, pad + 5 * yf);
-    line(pad + gw, pad + 4 * yf, pad + gw, pad + 5 * yf);
+    for (f = 0; f <= 8; f++) {
+      a = pt(f, 0);
+      b = pt(f, 4);
+      line(a.x, a.y, b.x, b.y);
+      a = pt(f, 5);
+      b = pt(f, 9);
+      line(a.x, a.y, b.x, b.y);
+    }
+    a = pt(0, 4);
+    b = pt(0, 5);
+    line(a.x, a.y, b.x, b.y);
+    a = pt(8, 4);
+    b = pt(8, 5);
+    line(a.x, a.y, b.x, b.y);
 
     function cross(f0, r0, f1, r1) {
-      line(pad + f0 * xf, pad + r0 * yf, pad + f1 * xf, pad + r1 * yf, "palace");
+      a = pt(f0, r0);
+      b = pt(f1, r1);
+      line(a.x, a.y, b.x, b.y, "palace");
     }
     cross(3, 0, 5, 2);
     cross(5, 0, 3, 2);
@@ -498,14 +518,14 @@
     cross(5, 7, 3, 9);
 
     function mark(f0, r0) {
-      var x = pad + f0 * xf;
-      var y = pad + r0 * yf;
+      var p = pt(f0, r0);
       var s = 8;
       var g = 4;
       [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(function (d) {
-        if ((d[0] < 0 && f0 === 0) || (d[0] > 0 && f0 === 8)) return;
-        line(x + d[0] * g, y + d[1] * g, x + d[0] * (g + s), y + d[1] * g, "cannon-mark");
-        line(x + d[0] * g, y + d[1] * g, x + d[0] * g, y + d[1] * (g + s), "cannon-mark");
+        var vf = state.playerRed ? f0 : 8 - f0;
+        if ((d[0] < 0 && vf === 0) || (d[0] > 0 && vf === 8)) return;
+        line(p.x + d[0] * g, p.y + d[1] * g, p.x + d[0] * (g + s), p.y + d[1] * g, "cannon-mark");
+        line(p.x + d[0] * g, p.y + d[1] * g, p.x + d[0] * g, p.y + d[1] * (g + s), "cannon-mark");
       });
     }
     [2, 7].forEach(function (rr) {
@@ -530,12 +550,16 @@
 
   function buildHitLayer() {
     els.hits.innerHTML = "";
-    for (var r = 9; r >= 0; r--) {
+    for (var r = 0; r <= 9; r++) {
       for (var f = 0; f < 9; f++) {
+        var s = X.sq(f, r);
         var btn = document.createElement("button");
         btn.type = "button";
         btn.className = "hit";
-        btn.dataset.sq = String(X.sq(f, r));
+        btn.dataset.sq = String(s);
+        var p = visualPos(s);
+        btn.style.left = p.left + "%";
+        btn.style.top = p.top + "%";
         els.hits.appendChild(btn);
       }
     }
@@ -545,8 +569,7 @@
     els.hits.addEventListener("click", function (e) {
       var btn = e.target.closest(".hit");
       if (!btn) return;
-      var ds = +btn.dataset.sq;
-      onSquareClick(fromDisplay(ds));
+      onSquareClick(+btn.dataset.sq);
     });
 
     els.board.addEventListener("click", function (e) {
