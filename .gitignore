@@ -3,3 +3,12 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+node_modules/
+xianghe/node_modules/
+xianghe/client/node_modules/
+xianghe/server/node_modules/
+xianghe/client/dist/
+xianghe/server/data/*.db
+xianghe/server/data/*.db-*
+.env
+*.log
