@@ -76,7 +76,7 @@
     <None Remove="Resources\Images\paint.png" />
     <None Remove="Resources\Images\prompt.png" />
     <None Remove="Resources\Images\sort.png" />
-    <None Remove="Resources\Images\switch.png" />
+    <None Remove="Resources\Images\switchwindow.png" />
     <None Remove="Resources\Images\translate.png" />
     <None Remove="Resources\Images\update.png" />
   </ItemGroup>
@@ -97,7 +97,7 @@
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
   </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(OS)' == 'Windows_NT'">
     <Exec Command="echo Release@@Any CPU&#xD;&#xA;if &quot;$(ConfigurationName)&quot; == &quot;Release&quot; (if &quot;$(PlatformName)&quot; == &quot;AnyCPU&quot; (&quot;$(ProjectDir)_Obfuscar\Obfuscar.Console.exe&quot; &quot;$(ProjectDir)_Obfuscar\obfuscar_Release_Any_CPU.xml&quot;&#xD;&#xA;xcopy /e /v &quot;$(ProjectDir)bin\Release\net7.0-windows10.0.19041.0\win10-x64\\Out\&quot; &quot;$(ProjectDir)bin\Release\net7.0-windows10.0.19041.0\win10-x64\&quot; /Y))" />
     <Exec Command="echo Debug@@Any CPU&#xD;&#xA;if &quot;$(ConfigurationName)&quot; == &quot;Debug&quot; (if &quot;$(PlatformName)&quot; == &quot;AnyCPU&quot; (&quot;$(ProjectDir)_Obfuscar\Obfuscar.Console.exe&quot; &quot;$(ProjectDir)_Obfuscar\obfuscar_Debug_Any_CPU.xml&quot;&#xD;&#xA;xcopy /e /v &quot;$(ProjectDir)bin\Debug\net7.0-android\\Out\&quot; &quot;$(ProjectDir)bin\Debug\net7.0-android\&quot; /Y))" />
   </Target>
