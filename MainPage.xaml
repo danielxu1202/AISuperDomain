@@ -15,7 +15,7 @@
                      />
         
         <ToolbarItem Text="切换到窗口数"
-                 IconImageSource="switch.png"
+                 IconImageSource="switchwindow.png"
                      Clicked="ToolbarItem_Switch_Webview_Quantity_Clicked"
                      />
 
