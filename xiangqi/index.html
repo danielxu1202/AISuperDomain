@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>楚河汉界 · 人机中国象棋</title>
+  <link rel="stylesheet" href="css/xiangqi.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <div>
+        <div class="seal">人机对弈</div>
+        <h1>楚河汉界</h1>
+        <p class="subtitle">中国象棋 · 可调难度 · 最高大师级</p>
+      </div>
+      <div class="hero-meta">
+        <div>点击棋子走棋，可悔棋、提示</div>
+        <div>困毙与将死均为负，三次重复作和</div>
+      </div>
+    </header>
+
+    <div id="board-wrap" class="board-wrap">
+      <div id="board" class="board">
+        <svg id="grid" viewBox="0 0 800 900" aria-hidden="true"></svg>
+        <div class="marks"></div>
+        <div class="pieces"></div>
+        <div id="hits" class="hits"></div>
+      </div>
+    </div>
+
+    <aside>
+      <section class="panel">
+        <h2>对局设置</h2>
+        <label for="level">机器水平</label>
+        <select id="level"></select>
+        <label for="side">你的阵营</label>
+        <select id="side">
+          <option value="red" selected>执红先行</option>
+          <option value="black">执黑后手</option>
+          <option value="random">随机</option>
+        </select>
+        <div class="actions">
+          <button class="btn primary" id="btn-new" type="button">新开一局</button>
+          <button class="btn" id="btn-undo" type="button">悔棋</button>
+          <button class="btn" id="btn-hint" type="button">提示</button>
+          <button class="btn ghost" id="btn-resign" type="button">认输</button>
+        </div>
+        <div id="status" class="status">你执红，请先走</div>
+      </section>
+
+      <section class="panel">
+        <h2>当前局面</h2>
+        <div class="meta-line"><span>难度</span><strong><span id="level-name">高级</span> · <span id="level-title">地方高手</span></strong></div>
+        <div class="meta-line"><span>阵营</span><strong id="side-label">执红先行</strong></div>
+        <div class="meta-line"><span>状态</span><strong><i id="think-dot"></i><span id="turn-label">轮到你</span></strong></div>
+        <label>红方被吃</label>
+        <div id="cap-red" class="caps"></div>
+        <label>黑方被吃</label>
+        <div id="cap-black" class="caps"></div>
+      </section>
+
+      <section class="panel">
+        <h2>着法</h2>
+        <div id="moves" class="moves"></div>
+      </section>
+
+      <section class="panel help">
+        入门到中级适合熟悉规则；高级、专家会算杀与争夺先手；大师级使用开局库、迭代加深、置换表与静态搜索，思考时间最长。
+      </section>
+    </aside>
+  </div>
+
+  <div id="result-mask" class="result-mask">
+    <div class="result-card">
+      <h3 id="result-title">对局结束</h3>
+      <p id="result-desc"></p>
+      <div class="actions">
+        <button class="btn primary" id="btn-again" type="button">再来一盘</button>
+        <button class="btn ghost" id="btn-close-result" type="button">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/xiangqi-engine.js"></script>
+  <script src="js/xiangqi-app.js"></script>
+</body>
+</html>
