@@ -2,6 +2,19 @@
 如需二次开发请使用rider/vscode/vs2022+.NET7
 欢迎参与开发与完善
 
+## 香乘新笺（AI 合香师助手）
+
+仓库内新增 Web 项目 [`xianghe/`](./xianghe/README.md)：React + Node.js + SQLite。
+把中式合香的君臣佐使、香材古籍与安全红线做成可检索知识库，AI 只做助手：开方、校验民间方、手作答疑、国风香笺。
+不宣传疗效，不输出朱砂等禁止香材，也不能在手机上闻到味道。
+
+```bash
+cd xianghe && npm install && npm run install:all && npm run dev
+```
+
+打开 http://localhost:5173
+
+
 ## 我创建的GPTs项目：
 https://chat.openai.com/g/g-IlqQq6PIi-artful-rewriter
 
